@@ -13,32 +13,20 @@
     </style>
 </head>
 <body>
-    <iframe id="embeddedContent" src="https://ayrewav.framer.website"></iframe>
+    <iframe id="embeddedContent" src="https://ayrewav.framer.website" onload="hideFramerBadge()"></iframe>
     <script>
         function hideFramerBadge() {
             const iframe = document.getElementById('embeddedContent');
-            const iframeWindow = iframe.contentWindow;
-            const iframeDoc = iframe.contentDocument || iframeWindow.document;
-            
-            // Wait until the iframe content is fully loaded
             iframe.onload = () => {
-                const observer = new MutationObserver((mutationsList, observer) => {
-                    const badge = iframeDoc.querySelector('#__framer-badge-container');
-                    if (badge) {
-                        badge.style.display = 'none';
-                        observer.disconnect();
-                    }
-                });
-
-                observer.observe(iframeDoc, {
-                    childList: true,
-                    subtree: true
-                });
+                const cssToHideBadge = `
+                    <style>
+                        #__framer-badge-container { display: none !important; }
+                    </style>
+                `;
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.head.insertAdjacentHTML('beforeend', cssToHideBadge);
             };
         }
-
-        // Ensure the script runs after the iframe content is loaded
-        document.addEventListener('DOMContentLoaded', hideFramerBadge);
     </script>
 </body>
 </html>
